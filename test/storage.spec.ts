@@ -1,4 +1,4 @@
-import { createStorage, InMemoryStorage } from '../dist';
+import { createStorage, InMemoryStorage } from '../src';
 
 const storage = createStorage(new InMemoryStorage(), 'password');
 
