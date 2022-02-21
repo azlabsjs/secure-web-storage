@@ -3,6 +3,7 @@
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "type": "module",
   "files": [
     "dist/**/*"
   ],
@@ -12,12 +13,11 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
-    "test": "tsdx test",
-    "test:coverage": "tsdx test --coverage",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
-    "analyze": "size-limit --why"
+    "analyze": "size-limit --why",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "husky": {
     "hooks": {
@@ -57,5 +57,12 @@
   },
   "dependencies": {
     "crypto-es": "^1.2.7"
+  },
+  "jest": {
+    "testRegex": "(/tests/.*\\.spec\\.js)$",
+    "testEnvironment": "jest-environment-node",
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)?$": "babel-jest"
+    }
   }
 }
