@@ -1,1 +1,2 @@
-# Documentation
+
+# Package documentation

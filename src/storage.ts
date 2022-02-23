@@ -16,6 +16,25 @@ type SecureStorageOptionType = {
 };
 
 /**
+ * Type definition for storage provider with
+ * method for returns the number of element in cache
+ *
+ * @example
+ * const storage = new SizeAwareInstance();
+ *
+ * // Get the capacity or total number of elements
+ * // in cache
+ * console.log(storage.size()); // number
+ */
+export interface SizeAware {
+  /**
+   * Returns the number of elements in the object
+   * implementing the current interface
+   */
+  size(): number;
+}
+
+/**
  * Custom storage type defintion that will use Javascript {@see Storage}
  * instance internally
  */
@@ -42,16 +61,24 @@ export interface StorageInterface {
 }
 
 // @internal
-abstract class SecureStorage implements Storage {
-  // Properties definition
-  get length() {
-    return this.storage.length;
-  }
+abstract class SecureStorage implements Storage, SizeAware {
+  public readonly length!: number;
 
   constructor(
     private storage: Storage,
     private options: SecureStorageOptionType
-  ) {}
+  ) {
+    // Creates a reaonly {@see length} property on the current object
+    Object.defineProperty(this, 'length', {
+      configurable: false,
+      enumerable: true,
+      get: () => this.storage.length,
+    });
+  }
+
+  size(): number {
+    return this.length;
+  }
 
   /**
    * @description Get a value from the key -> value store
@@ -124,9 +151,15 @@ abstract class SecureStorage implements Storage {
 export class InMemoryStorage implements Storage {
   // Properties definition
   private cache = new Map<string, string>();
-  // Length property getter
-  get length() {
-    return this.cache.size;
+  public readonly length!: number;
+
+  constructor() {
+    // Creates a reaonly {@see length} property on the current object
+    Object.defineProperty(this, 'length', {
+      configurable: false,
+      enumerable: true,
+      get: () => this.cache.size,
+    });
   }
 
   /**
@@ -195,7 +228,7 @@ export class SecureWebStorage extends SecureStorage {
         data = CryptoES.AES.encrypt(data, secret);
         return data.toString();
       },
-      decrypt: function(data: string | CryptoES.lib.CipherParams): any {
+      decrypt: function (data: string | CryptoES.lib.CipherParams): any {
         const plain = CryptoES.AES.decrypt(data, secret);
         return plain.toString(CryptoES.enc.Utf8);
       },
@@ -203,6 +236,7 @@ export class SecureWebStorage extends SecureStorage {
   }
 }
 
+export function createStorage(internal: Storage, secret: string): SecureStorage;
 /**
  * Provides a storage object that encrypt it key -> value pair before
  * adding it to cache.
@@ -228,5 +262,6 @@ export class SecureWebStorage extends SecureStorage {
  * // Flushing cache
  * storage.clear();
  */
-export const createStorage = (internal: Storage, secret: string) =>
-  new SecureWebStorage(internal, secret);
+export function createStorage(internal: Storage, secret: string) {
+  return new SecureWebStorage(internal, secret);
+}
