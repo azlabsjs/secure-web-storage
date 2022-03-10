@@ -2,7 +2,9 @@
 
 # Secure Web Storage
 
-Implementation of javascript storage interface that encrypt key **value pair before writing them to cache**
+Implementation of javascript storage interface that encrypt key 
+
+> Note : **value pair before writing them to cache**
 
 # Usage
 
