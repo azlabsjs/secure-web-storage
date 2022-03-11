@@ -2,7 +2,7 @@
 
 # Secure Web Storage
 
-Implementation of javascript storage interface that encrypt key 
+Implementation of javascript storage interface that encrypt key
 
 > Note : **value pair before writing them to cache**
 
@@ -26,7 +26,7 @@ storage.getInternal().toBeInstanceOf(InMemoryStorage);
 
 # Example
 
-## Add an item into the storage with the key=key1y
+## Add an item into the storage with the key=key1
 
 ```ts
 storage.setItem('key1', { lat: 3.784943, long: 1.76284 });
@@ -37,8 +37,6 @@ storage.getItem('key1');
 ## Hash the key=key1 before adding it to the internal storage
 
 ```ts
-storage.setItem('key1', { lat: 3.784943, long: 1.76284 });
-
 storage.getInternal().key(0);
 ```
 
