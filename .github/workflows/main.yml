@@ -1,7 +1,7 @@
 # This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
 # For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
 
-name: Deployment
+name: Package deployment
 
 on:
   push:
@@ -30,9 +30,6 @@ jobs:
       - name: Check npm version
         run: npm -v
 
-      - name: Removes package-lock.json
-        run: rm package-lock.json
-
       - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1
         with:
@@ -40,6 +37,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Build
+        run: npm run build
     env:
       NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -59,10 +59,7 @@ jobs:
       - name: Check npm version
         run: npm -v
 
-      - name: Removes package-lock.json
-        run: rm package-lock.json
-
-      - name: Install deps and build
+      - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1
         with:
           useLockFile: false

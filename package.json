@@ -1,5 +1,6 @@
 {
     "version": "0.1.3",
+    "name": "@iazlabs/secure-web-storage",
     "license": "MIT",
     "main": "dist/index.js",
     "typings": "dist/types/index.d.ts",
@@ -12,10 +13,11 @@
     "scripts": {
         "build": "ts-build build",
         "lint": "ts-build lint",
-        "prepare": "ts-build build",
+        "prepare": "git config core.hookspath .githooks && ts-build build",
         "size": "size-limit",
         "analyze": "size-limit --why",
-        "test": "jest"
+        "test": "jest",
+        "betterer": "betterer --strict"
     },
     "husky": {
         "hooks": {
@@ -35,7 +37,6 @@
             "default": "./dist/cjs/index.js"
         }
     },
-    "name": "@iazlabs/secure-web-storage",
     "author": "azandrew-sidoine",
     "module": "dist/esm/index.js",
     "size-limit": [
@@ -48,13 +49,10 @@
             "limit": "10 KB"
         }
     ],
-    "publishConfig": {
-        "registry": "https://npm.pkg.github.com/@iazlabs"
-    },
-    "dependencies": {
-        "crypto-es": "^1.2.7"
-    },
     "devDependencies": {
+        "@betterer/cli": "^5.1.6",
+        "@betterer/typescript": "^5.1.6",
+        "@iazlabs/clone": "^0.1.3",
         "@iazlabs/ts-build": "^0.1.6",
         "@size-limit/preset-small-lib": "^7.0.8",
         "@types/jest": "^27.4.1",
@@ -63,9 +61,16 @@
         "husky": "^7.0.4",
         "jest": "^27.5.1",
         "jest-watch-typeahead": "^1.0.0",
+        "lint-staged": "^12.3.5",
         "size-limit": "^7.0.8",
         "ts-jest": "^27.1.3",
         "tslib": "^2.3.1",
         "typescript": "^4.5.5"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/@iazlabs"
+    },
+    "dependencies": {
+        "crypto-es": "^1.2.7"
     }
 }
