@@ -1,5 +1,5 @@
 {
-    "version": "0.1.10",
+    "version": "0.1.11",
     "name": "@azlabsjs/secure-web-storage",
     "license": "MIT",
     "main": "dist/index.js",
@@ -39,7 +39,8 @@
     },
     "author": "azandrew-sidoine",
     "module": "dist/esm/index.js",
-    "size-limit": [{
+    "size-limit": [
+        {
             "path": "dist/cjs/index.js",
             "limit": "10 KB"
         },
