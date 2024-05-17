@@ -4,3 +4,7 @@
 ## [v0.1.1] 2022-03-22
 
 - Update build tools
+
+## [v0.2.0] 2024-05-17
+
+- Upgraded @azlabsjs/ts-build version to 0.4.21
