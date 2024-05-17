@@ -76,6 +76,6 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/azlabsjs/secure-web-storage.git"
+        "url": "git+https://github.com/azlabsjs/secure-web-storage.git"
     }
 }
