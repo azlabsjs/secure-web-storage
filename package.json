@@ -15,9 +15,7 @@
         "lint": "ts-build lint",
         "prepare": "git config core.hookspath .githooks && ts-build build",
         "size": "size-limit",
-        "analyze": "size-limit --why",
-        "test": "jest",
-        "betterer": "betterer --strict"
+        "test": "jest"
     },
     "husky": {
         "hooks": {
@@ -70,7 +68,7 @@
         "registry": "https://npm.pkg.github.com/@azlabsjs"
     },
     "dependencies": {
-        "crypto-es": "^1.2.7"
+        "crypto-es": "^2.1.0"
     },
     "repository": {
         "type": "git",
