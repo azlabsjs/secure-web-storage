@@ -1,5 +1,5 @@
 {
-    "version": "0.1.12",
+    "version": "0.1.13",
     "name": "@azlabsjs/secure-web-storage",
     "license": "MIT",
     "main": "dist/index.js",
