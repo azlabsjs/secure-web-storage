@@ -224,7 +224,8 @@ export class SecureWebStorage extends SecureStorage {
   }
 }
 
-export function createStorage(internal: Storage, secret: string): SecureStorage;
+export function createStorage(internal: Storage, secret: string, prefix?: string): SecureStorage;
+
 /**
  * Provides a storage object that encrypt it key -> value pair before
  * adding it to cache.
