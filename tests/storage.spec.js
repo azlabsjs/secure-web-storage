@@ -1,6 +1,6 @@
 import { createStorage, InMemoryStorage } from '../dist';
 
-const storage = createStorage(new InMemoryStorage(), 'password');
+const storage = createStorage(new InMemoryStorage(), 'MyPassword', 'my_app_');
 
 describe('Secure Storage Tests', () => {
   it('Creates an instance of StorageInterface', () => {

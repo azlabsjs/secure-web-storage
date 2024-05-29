@@ -13,6 +13,7 @@ type SecureStorageOptionType = {
   hash: HashFn;
   encrypt: EncrypterFn;
   decrypt: DecrypterFn;
+  prefix?: string;
 };
 
 /**
@@ -34,29 +35,18 @@ export interface SizeAware {
   size(): number;
 }
 
-/**
- * Custom storage type defintion that will use Javascript {@see Storage}
- * instance internally
- */
+/** @description Custom storage type defintion that will use Javascript {@see Storage} instance internally */
 export interface StorageInterface {
-  /**
-   * @description Get a value from the key -> value store
-   */
+  /** @description Get a value from the key -> value store */
   get<T>(key: string): T;
 
-  /**
-   * @description Set a value in the key -> value store
-   */
+  /** @description Set a value in the key -> value store */
   set<T>(key: string, value: T): void;
 
-  /**
-   * @description Delete item from the key -> value store with a provided key
-   */
+  /** @description Delete item from the key -> value store with a provided key */
   delete(key: string): void;
 
-  /**
-   * @description Clear or reinitialize the key -> value store
-   */
+  /** @description Clear or reinitialize the key -> value store */
   clear(): void;
 }
 
@@ -64,6 +54,7 @@ export interface StorageInterface {
 abstract class SecureStorage implements Storage, SizeAware {
   public readonly length!: number;
 
+  /** @description Class constructor */
   constructor(
     private storage: Storage,
     private options: SecureStorageOptionType
@@ -80,36 +71,31 @@ abstract class SecureStorage implements Storage, SizeAware {
     return this.length;
   }
 
-  /**
-   * @description Get a value from the key -> value store
-   */
+  /** @description Get a value from the key -> value store */
   getItem(key: string): any {
+    key = this.keyName(key);
     const value = this.storage.getItem(this.options.hash(key) as string);
     return typeof value !== 'string'
       ? value
       : JSON.parse(this.options.decrypt(value));
   }
 
-  /**
-   * @description Set a value in the key -> value store
-   */
+  /** @description Set a value in the key -> value store */
   setItem(key: string, value: any): any {
+    key = this.keyName(key);
     return this.storage.setItem(
       this.options.hash(key) as string,
       this.options.encrypt(JSON.stringify(value)) as string
     );
   }
 
-  /**
-   * @description Delete item from the key -> value store with a provided key
-   */
+  /** @description Delete item from the key -> value store with a provided key */
   removeItem(key: string): any {
+    key = this.keyName(key);
     return this.storage.removeItem(this.options.hash(key) as string);
   }
 
-  /**
-   * @description Clear or reinitialize the key -> value store
-   */
+  /** @description Clear or reinitialize the key -> value store */
   clear(): void {
     return this.storage.clear();
   }
@@ -118,11 +104,14 @@ abstract class SecureStorage implements Storage, SizeAware {
     return this.storage.key(id) as string;
   }
 
-  /**
-   * Returns the internal cache provider
-   *
-   * @returns
-   */
+  private keyName(key: string) {
+    const { prefix } = this.options;
+    return `${
+      !prefix?.endsWith('_') ? prefix : prefix?.substring(0, prefix.length - 1)
+    }_${key}`;
+  }
+
+  /** @description Returns the internal cache provider */
   getInternal = () => this.storage;
 }
 
@@ -162,9 +151,7 @@ export class InMemoryStorage implements Storage {
     });
   }
 
-  /**
-   * @description Get a value from the key -> value store
-   */
+  /** @description Get a value from the key -> value store */
   getItem(key: string): any {
     const value = this.cache.get(key);
     return typeof value !== 'string' ? value : JSON.parse(value);
@@ -218,7 +205,7 @@ export class InMemoryStorage implements Storage {
  */
 export class SecureWebStorage extends SecureStorage {
   // Constructor function
-  constructor(storage: Storage, secret: string) {
+  constructor(storage: Storage, secret: string, prefix = '') {
     super(storage, {
       hash: function hash(key: string): string | CryptoES.lib.WordArray {
         const $hash = CryptoES.MD5(key);
@@ -232,6 +219,7 @@ export class SecureWebStorage extends SecureStorage {
         const plain = CryptoES.AES.decrypt(data, secret);
         return plain.toString(CryptoES.enc.Utf8);
       },
+      prefix,
     });
   }
 }
@@ -262,6 +250,6 @@ export function createStorage(internal: Storage, secret: string): SecureStorage;
  * // Flushing cache
  * storage.clear();
  */
-export function createStorage(internal: Storage, secret: string) {
-  return new SecureWebStorage(internal, secret);
+export function createStorage(internal: Storage, secret: string, prefix = '') {
+  return new SecureWebStorage(internal, secret, prefix);
 }
