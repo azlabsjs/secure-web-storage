@@ -1,8 +1,8 @@
 import CryptoES from 'crypto-es';
 
 type HashFn = (key: string) => string | CryptoES.lib.WordArray;
-type DecrypterFn = (data: string | CryptoES.lib.CipherParams) => any;
-type EncrypterFn = (data: any) => string | CryptoES.lib.WordArray;
+type DecrypterFn = (data: string | CryptoES.lib.CipherParams) => string;
+type EncrypterFn = <T extends string>(data: T) => string;
 
 /**
  * @internal
@@ -72,16 +72,16 @@ abstract class SecureStorage implements Storage, SizeAware {
   }
 
   /** @description Get a value from the key -> value store */
-  getItem(key: string): any {
+  getItem<T = unknown>(key: string): T {
     key = this.keyName(key);
     const value = this.storage.getItem(this.options.hash(key) as string);
     return typeof value !== 'string'
-      ? value
+      ? (value as T)
       : JSON.parse(this.options.decrypt(value));
   }
 
   /** @description Set a value in the key -> value store */
-  setItem(key: string, value: any): any {
+  setItem<T>(key: string, value: T) {
     key = this.keyName(key);
     return this.storage.setItem(
       this.options.hash(key) as string,
@@ -90,7 +90,7 @@ abstract class SecureStorage implements Storage, SizeAware {
   }
 
   /** @description Delete item from the key -> value store with a provided key */
-  removeItem(key: string): any {
+  removeItem(key: string) {
     key = this.keyName(key);
     return this.storage.removeItem(this.options.hash(key) as string);
   }
@@ -100,8 +100,8 @@ abstract class SecureStorage implements Storage, SizeAware {
     return this.storage.clear();
   }
 
-  key(id: number): string {
-    return this.storage.key(id) as string;
+  key(id: number) {
+    return this.storage.key(id);
   }
 
   private keyName(key: string) {
@@ -140,6 +140,7 @@ abstract class SecureStorage implements Storage, SizeAware {
 export class InMemoryStorage implements Storage {
   // Properties definition
   private cache = new Map<string, string>();
+
   public readonly length!: number;
 
   constructor() {
@@ -152,28 +153,22 @@ export class InMemoryStorage implements Storage {
   }
 
   /** @description Get a value from the key -> value store */
-  getItem(key: string): any {
+  getItem(key: string) {
     const value = this.cache.get(key);
     return typeof value !== 'string' ? value : JSON.parse(value);
   }
 
-  /**
-   * @description Set a value in the key -> value store
-   */
-  setItem(key: string, value: any) {
+  /** @description Set a value in the key -> value store */
+  setItem<T>(key: string, value: T) {
     this.cache.set(key, JSON.stringify(value));
   }
 
-  /**
-   * @description Delete item from the key -> value store with a provided key
-   */
+  /** @description Delete item from the key -> value store with a provided key */
   removeItem(key: string) {
     this.cache.delete(key);
   }
 
-  /**
-   * @description Clear or reinitialize the key -> value store
-   */
+  /** @description Clear or reinitialize the key -> value store */
   clear(): void {
     this.cache.clear();
   }
@@ -211,11 +206,14 @@ export class SecureWebStorage extends SecureStorage {
         const $hash = CryptoES.MD5(key);
         return $hash.toString();
       },
-      encrypt: function encrypt(data: any): string | CryptoES.lib.WordArray {
-        data = CryptoES.AES.encrypt(data, secret);
-        return data.toString();
+      encrypt: function encrypt<
+        T extends string | CryptoES.lib.WordArray =
+          | string
+          | CryptoES.lib.WordArray,
+      >(data: T): string {
+        return CryptoES.AES.encrypt(data, secret).toString();
       },
-      decrypt: function (data: string | CryptoES.lib.CipherParams): any {
+      decrypt: function (data: string | CryptoES.lib.CipherParams) {
         const plain = CryptoES.AES.decrypt(data, secret);
         return plain.toString(CryptoES.enc.Utf8);
       },
@@ -224,7 +222,11 @@ export class SecureWebStorage extends SecureStorage {
   }
 }
 
-export function createStorage(internal: Storage, secret: string, prefix?: string): SecureStorage;
+export function createStorage(
+  internal: Storage,
+  secret: string,
+  prefix?: string
+): SecureStorage;
 
 /**
  * Provides a storage object that encrypt it key -> value pair before

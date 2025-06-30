@@ -12,3 +12,7 @@
 ## [0.2.2] 2024-05-29 
 
 - Added support for prefixing to createStorage() function and provided a README documentation
+
+## [v0.2.30] 2024-06-30
+
+- Upgraded @azlabsjs/ts-build version to 0.5.x
