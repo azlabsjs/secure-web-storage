@@ -35,18 +35,18 @@ export interface SizeAware {
   size(): number;
 }
 
-/** @description Custom storage type defintion that will use Javascript {@see Storage} instance internally */
+/** @description custom storage type defintion that will use Javascript {@see Storage} instance internally */
 export interface StorageInterface {
-  /** @description Get a value from the key -> value store */
-  get<T>(key: string): T;
+  /** @description get a value from the key -> value store */
+  get<T>(key: string): T | undefined | null;
 
-  /** @description Set a value in the key -> value store */
+  /** @description set a value in the key -> value store */
   set<T>(key: string, value: T): void;
 
-  /** @description Delete item from the key -> value store with a provided key */
+  /** @description delete item from the key -> value store with a provided key */
   delete(key: string): void;
 
-  /** @description Clear or reinitialize the key -> value store */
+  /** @description clear or reinitialize the key -> value store */
   clear(): void;
 }
 

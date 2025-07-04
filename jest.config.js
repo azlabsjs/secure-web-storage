@@ -1,10 +1,10 @@
-
 module.exports = {
   transform: {
-    '.(ts|tsx)$': require.resolve('ts-jest/dist'),
-    '.(js|jsx)$': require.resolve('babel-jest'), // jest's default
+    '^.+\\.(js|jsx)$': 'babel-jest', // For JS/JSX
+    '^.+\\.(ts|tsx)$': 'ts-jest',   // For TS/TSX
   },
-  transformIgnorePatterns: ['[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$'],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'], // Treat these extensions as ESM
+  transformIgnorePatterns: ['/node_modules/(?!.*(\\.mjs|\\.js)$)'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   collectCoverageFrom: ['src/**/*.{ts,tsx,js,jsx}'],
   testMatch: ['<rootDir>/tests/**/*.(spec|test).{ts,tsx,js,jsx}'],
